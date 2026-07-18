@@ -9,7 +9,6 @@ import orderRoutes from './routes/order.js';
 import blogRoutes from './routes/blog.js';
 import categoryRoutes from './routes/category.js';
 import collectionRoutes from './routes/collection.js';
-import crmRoutes from './routes/crm/index.js';
 const app = express();
 
 const allowedOrigins = [
@@ -18,7 +17,6 @@ const allowedOrigins = [
     process.env.CRM_URL,
     'http://localhost:3000',
     'http://localhost:3001',
-    'http://localhost:3002',
 ].filter(Boolean);
 
 app.use(cors({
@@ -36,6 +34,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use('/uploads', express.static('uploads'));
 
 // Basic route to test API
 app.get('/api', (req, res) => {
@@ -54,7 +53,6 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/collections', collectionRoutes);
-app.use('/api/crm', crmRoutes);
 // Root route
 app.get('/', (req, res) => {
     const port = process.env.PORT || 4000;

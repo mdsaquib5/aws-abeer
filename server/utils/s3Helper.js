@@ -1,57 +1,53 @@
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { Upload } from "@aws-sdk/lib-storage";
-import s3Client from "../configs/s3.js";
 import crypto from "crypto";
 import path from "path";
+import fs from "fs";
 
 export const uploadToS3 = async (
     fileBuffer,
     folder,
     mimetype = "application/octet-stream"
 ) => {
-    if (!process.env.R2_BUCKET_NAME || !process.env.R2_PUBLIC_DOMAIN) {
-        throw new Error("Server Configuration Error: R2_BUCKET_NAME or R2_PUBLIC_DOMAIN is missing.");
+    // Ensure uploads directory exists
+    const uploadDir = path.join(process.cwd(), "uploads");
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    // Generate a unique filename: folder/timestamp-randomstring
+    // Determine file extension
+    let ext = "bin";
+    if (mimetype) {
+        const parts = mimetype.split("/");
+        if (parts.length > 1) {
+            ext = parts[1].split(";")[0]; // handle any extra params in mimetype
+        }
+    }
+
+    // Generate unique file name
     const uniqueId = crypto.randomBytes(8).toString("hex");
-    const key = `${folder}/${Date.now()}-${uniqueId}`;
+    const filename = `${folder}-${Date.now()}-${uniqueId}.${ext}`;
+    const filePath = path.join(uploadDir, filename);
 
-    const upload = new Upload({
-        client: s3Client,
-        params: {
-            Bucket: process.env.R2_BUCKET_NAME,
-            Key: key,
-            Body: fileBuffer,
-            ContentType: mimetype,
-            // S3 bucket is public, but we don't need to specify ACL if Object Ownership is Bucket owner enforced (ACLs disabled)
-        },
-    });
+    // Save file locally
+    fs.writeFileSync(filePath, fileBuffer);
 
-    const result = await upload.done();
-
-    // R2 URLs are typically of the format: https://[public-domain]/[key]
-    const url = `${process.env.R2_PUBLIC_DOMAIN}/${key}`;
+    // Return URL and filename (as publicId for deletion)
+    const url = `/uploads/${filename}`;
 
     return {
         url,
-        publicId: key, // We store the Key as publicId to easily delete it later
+        publicId: filename,
     };
 };
 
 export const deleteFromS3 = async (publicId, resourceType = "image") => {
-    // S3 doesn't care about resourceType for deletion, but we keep the signature compatible
     if (!publicId) return;
 
-    const command = new DeleteObjectCommand({
-        Bucket: process.env.R2_BUCKET_NAME,
-        Key: publicId,
-    });
-
     try {
-        await s3Client.send(command);
+        const filePath = path.join(process.cwd(), "uploads", publicId);
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
     } catch (error) {
-        console.error("Error deleting from S3:", error);
-        // We don't throw error to prevent breaking the flow if file doesn't exist
+        console.error("Error deleting local file:", error);
     }
 };
