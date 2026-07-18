@@ -1,0 +1,86 @@
+/* <= 1820px */
+@media (min-width: 1820px) {}
+
+/* <= 1600px */
+@media (max-width: 1600px) {}
+
+@media screen and (min-width: 1440px) and (max-width: 1540px) {}
+
+/* <= 1440px */
+@media (min-width: 1440px) {
+
+    .sidebar-toggle-btn {
+        display: none;
+    }
+}
+
+@media (max-width: 1440px) {
+    .admin-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        transform: translateX(-100%);
+    }
+
+    .admin-sidebar.open {
+        transform: translateX(0);
+    }
+
+
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #00000066;
+    }
+
+    .sidebar-toggle-btn {
+        display: flex;
+    }
+}
+
+/* Desktop dropdown hover styling */
+@media (min-width: 1201px) {}
+
+/* <= 1200px */
+@media (max-width: 1200px) {}
+
+/* <= 1024px */
+@media (max-width: 1024px) {
+
+    .dashbaord-stats-grid,
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .add-product-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .categories-layout {
+        flex-direction: column;
+    }
+
+    .category-form-panel {
+        width: 100%;
+    }
+
+    .filter-btn {
+        white-space: nowrap;
+    }
+}
+
+/* <= 992px */
+@media (max-width: 992px) {}
+
+/* Hide mobile menu overlay and drawer on desktop */
+@media (min-width: 769px) {}
+
+/* <= 768px */
+@media (max-width: 768px) {}
+
+/* <= 576px */
+@media (max-width: 576px) {}
