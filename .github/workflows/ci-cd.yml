@@ -38,7 +38,7 @@ jobs:
 
       - name: Install Dependencies
         working-directory: app
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Run Build
         working-directory: app
@@ -69,7 +69,7 @@ jobs:
 
       - name: Install Dependencies
         working-directory: admin
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Run Build
         working-directory: admin
@@ -92,7 +92,7 @@ jobs:
 
       - name: Install Dependencies
         working-directory: server
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Run Lint/Test
         working-directory: server
