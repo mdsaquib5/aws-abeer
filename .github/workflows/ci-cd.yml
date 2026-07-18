@@ -1,0 +1,103 @@
+name: CI/CD Production Build Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - dev
+  pull_request:
+    branches:
+      - main
+      - master
+      - dev
+
+jobs:
+  # Job for Frontend App (Next.js)
+  frontend-app:
+    name: Build Frontend (Next.js)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: app/package-lock.json
+
+      - name: Cache Next.js Build
+        uses: actions/cache@v4
+        with:
+          path: app/.next/cache
+          key: ${{ runner.os }}-nextjs-app-${{ hashFiles('app/package-lock.json') }}-${{ hashFiles('app/src/**/*.js', 'app/src/**/*.jsx', 'app/src/**/*.ts', 'app/src/**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-app-${{ hashFiles('app/package-lock.json') }}-
+
+      - name: Install Dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Run Build
+        working-directory: app
+        run: npm run build
+
+  # Job for Admin App (Next.js)
+  admin-app:
+    name: Build Admin Panel (Next.js)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: admin/package-lock.json
+
+      - name: Cache Next.js Build
+        uses: actions/cache@v4
+        with:
+          path: admin/.next/cache
+          key: ${{ runner.os }}-nextjs-admin-${{ hashFiles('admin/package-lock.json') }}-${{ hashFiles('admin/src/**/*.js', 'admin/src/**/*.jsx', 'admin/src/**/*.ts', 'admin/src/**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-admin-${{ hashFiles('admin/package-lock.json') }}-
+
+      - name: Install Dependencies
+        working-directory: admin
+        run: npm ci
+
+      - name: Run Build
+        working-directory: admin
+        run: npm run build
+
+  # Job for Backend Server (Express Node.js)
+  backend-server:
+    name: Verify Backend Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Run Lint/Test
+        working-directory: server
+        run: |
+          # If lint or test scripts are defined in package.json, run them.
+          # We use "npm run --if-present" to avoid throwing error if scripts don't exist.
+          npm run lint --if-present
+          npm run test --if-present
