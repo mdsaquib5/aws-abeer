@@ -42,26 +42,26 @@ services:
       context: ./app
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://18.220.182.20:4000/api}
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://18.220.182.20/api}
     container_name: abeer-storefront
     restart: always
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://18.220.182.20:4000/api}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://18.220.182.20/api}
 
   admin:
     build:
       context: ./admin
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://18.220.182.20:4000/api}
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://18.220.182.20/api}
     container_name: abeer-admin
     restart: always
     ports:
       - "3001:3001"
     environment:
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://18.220.182.20:4000/api}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://18.220.182.20/api}
 
 volumes:
   uploads-data:
