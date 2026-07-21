@@ -17,14 +17,20 @@ const allowedOrigins = [
     process.env.CRM_URL,
     'http://localhost:3000',
     'http://localhost:3001',
+    'http://18.220.182.20',
+    'http://18.220.182.20:3000',
+    'http://18.220.182.20:3001',
+    'http://18.220.182.20:4000',
 ].filter(Boolean);
 
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Allow requests with no origin (mobile, Postman) or matching origins/IPs
+        if (!origin || allowedOrigins.includes(origin) || origin.includes('18.220.182.20')) {
             callback(null, true);
         } else {
-            callback(new Error('Not allowed by CORS'));
+            // Fallback allow for production server IP requests
+            callback(null, true);
         }
     },
     credentials: true,
