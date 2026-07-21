@@ -23,6 +23,6 @@ jobs:
           script: |
             cd ~/aws-abeer
             git pull origin main
-            docker compose -f docker-compose.prod.yml build --no-cache admin storefront
+            docker compose -f docker-compose.prod.yml build admin storefront
             docker compose -f docker-compose.prod.yml up -d
             docker exec abeer-nginx-proxy nginx -s reload
