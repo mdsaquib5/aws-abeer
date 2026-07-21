@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: abeer-label-backend
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - NODE_ENV=production
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRE=${JWT_EXPIRE}
+      - COOKIE_EXPIRE=${COOKIE_EXPIRE}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - ADMIN_URL=${ADMIN_URL}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - RESEND_EMAIL=${RESEND_EMAIL}
+    volumes:
+      - uploads-data:/usr/src/app/uploads
+
+volumes:
+  uploads-data:
+    driver: local
